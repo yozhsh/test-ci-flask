@@ -1,21 +1,11 @@
 version: 2.1
 
 orbs:
-  python: circleci/python@0.2.1
-
-jobs:
-  build-and-test:
-    executor: python/default
-    steps:
-      - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
-      - run:
-          command: ./manage.py test
-          name: Test
+  aws-ecr: circleci/aws-ecr@6.15.3
 
 workflows:
-  main:
+  build-and-deploy:
     jobs:
-      - build-and-test
+      - aws-ecr/build-and-push-image:
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          tag: "${CIRCLE_SHA1}"
